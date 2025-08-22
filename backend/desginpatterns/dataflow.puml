@@ -1,0 +1,24 @@
+@startuml
+actor User
+
+User -> API: POST /api/content/generate (topic, type)
+API -> Controller: handleRequest()
+Controller -> AIService: call AI API with prompt
+AIService -> OpenAI: request generated text
+OpenAI --> AIService: return generated text
+AIService -> DB: save content {topic, type, content}
+DB --> AIService: confirm saved
+AIService --> Controller: generated content
+Controller --> API: return JSON
+API --> User: generated content response
+
+User -> API: GET /api/content
+API -> DB: fetch all contents
+DB --> API: return contents
+API --> User: list of contents
+
+User -> API: GET /api/content/:id
+API -> DB: fetch content by ID
+DB --> API: return content
+API --> User: single content
+@enduml

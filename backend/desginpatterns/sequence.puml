@@ -1,0 +1,41 @@
+@startuml
+actor User
+participant "React App" as Frontend
+participant "Express API" as API
+participant "Content Controller" as Controller
+participant "AI Client" as AI
+participant "MongoDB Atlas" as DB
+participant "OpenAI API" as OpenAI
+
+User -> Frontend: Enter topic + type
+Frontend -> API: POST /api/content/generate
+API -> Controller: handleRequest()
+Controller -> AI: generateContent(topic, type)
+
+AI -> OpenAI: Send prompt
+OpenAI --> AI: Return generated text
+
+AI -> DB: Save {topic, type, content}
+DB --> AI: Confirm saved
+
+AI --> Controller: Generated content with metadata
+Controller --> API: JSON response
+API --> Frontend: Return generated content
+Frontend --> User: Display result
+
+== Fetch All Contents ==
+User -> Frontend: Request history
+Frontend -> API: GET /api/content
+API -> DB: fetch all
+DB --> API: return contents
+API --> Frontend: JSON response
+Frontend --> User: Display list
+
+== Fetch Single Content ==
+User -> Frontend: Request one content
+Frontend -> API: GET /api/content/:id
+API -> DB: fetch by ID
+DB --> API: return content
+API --> Frontend: JSON response
+Frontend --> User: Display content
+@enduml
